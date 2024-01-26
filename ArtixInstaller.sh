@@ -14,6 +14,13 @@ export normal="\033[0m"
 title() {
     clear
     echo -ne "${cyan}
+nc=$(grep -c ^processor /proc/cpuinfo)
+echo "You have " $nc" cores."
+echo "-------------------------------------------------"
+echo "Changing the makeflags for "$nc" cores."
+sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$nc"/g' /etc/makepkg.conf
+echo "Changing the compression settings for "$nc" cores."
+sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g' /etc/makepkg.conf
 ################################################################################
 #                                                                              #
 #   This is Automated Artix Linux Installer for both UEFI and Legacy System    #
