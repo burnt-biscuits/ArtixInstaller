@@ -1,12 +1,10 @@
 # Artix Linux Install Script
 ## Usage
 ```
-curl -sLO freaks.dev/ArtixInstaller.sh && sudo bash ArtixInstaller.sh
-```
-(OR)
-```
-curl -sLO https://raw.githubusercontent.com/heinokesoe/ArtixInstaller/main/ArtixInstaller.sh
+git clone https://github.com/burnt-biscuits/ArtixInstaller
+cd ArtixInstaller
 sudo bash ArtixInstaller.sh
+
 ```
 The script will ask you
 - root password
