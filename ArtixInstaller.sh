@@ -27,7 +27,13 @@ ${normal}
 "
 }
 
-start_install() {
+start_install() { 
+echo "-------------------------------------------------"
+echo "Setting up mirrors for optimal download - US Only"
+echo "-------------------------------------------------"
+pacman -S --noconfirm pacman-contrib curl
+mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+curl -s "https://www.arrtixlinux.org/mirrorlist/?country=US&protocol=https&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
 nc=$(grep -c ^processor /proc/cpuinfo)
 echo "You have " $nc" cores."
 echo "-------------------------------------------------"
@@ -215,7 +221,7 @@ confirm() {
 
 install_base_system() {
     log "$1"
-    basestrap "${target_mount_point}" base base-devel linux linux-firmware btrfs-progs cryptsetup-${init_system} "${init_programs[@]}"
+    basestrap "${target_mount_point}" base base-devel linux linux-firmware btrfs-progs git nano elogind-${init_system} cryptsetup-${init_system} "${init_programs[@]}"
     fstabgen -U "${target_mount_point}" >> "${target_mount_point}/etc/fstab"
     [[ -n ${encrypt_root} ]] && echo -e "root\tUUID=${encrypted_uuid}\tnone\tluks" >> "${target_mount_point}/etc/crypttab" || true
 }
