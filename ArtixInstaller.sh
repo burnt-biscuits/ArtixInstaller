@@ -28,19 +28,25 @@ ${normal}
 }
 
 start_install() { 
-echo "-------------------------------------------------"
-echo "Setting up mirrors for optimal download - US Only"
-echo "-------------------------------------------------"
-pacman -S --noconfirm pacman-contrib curl
-mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-curl -s "https://www.arrtixlinux.org/mirrorlist/?country=US&protocol=https&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
-nc=$(grep -c ^processor /proc/cpuinfo)
-echo "You have " $nc" cores."
-echo "-------------------------------------------------"
-echo "Changing the makeflags for "$nc" cores."
-sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$nc"/g' /etc/makepkg.conf
-echo "Changing the compression settings for "$nc" cores."
-sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g' /etc/makepkg.conf
+        
+        echo "-------------------------------------------------"
+        echo "Setting up mirrors for optimal download - US Only"
+        echo "-------------------------------------------------"
+        pacman -S --noconfirm pacman-contrib curl
+        mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+        curl -s "https://www.arrtixlinux.org/mirrorlist/?country=US&protocol=https&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
+       
+        echo "-------------------------------------------------"
+        echo "              makepkg configuration              "
+        echo "-------------------------------------------------"
+        nc=$(grep -c ^processor /proc/cpuinfo)
+        echo "You have "$nc" cores."
+        echo "-------------------------------------------------"
+        echo "Changing the makeflags for "$nc" cores."
+        sudo sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$nc"/g' /etc/makepkg.conf
+        echo "Changing the compression settings for "$nc" cores."
+        sudo sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g' /etc/makepkg.conf
+    
     while true; do
         read -srp "Enter root password: " password
         echo
