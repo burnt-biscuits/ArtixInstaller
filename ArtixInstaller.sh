@@ -46,7 +46,7 @@ start_install() {
         sudo sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$nc"/g' /etc/makepkg.conf
         echo "Changing the compression settings for "$nc" cores."
         sudo sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g' /etc/makepkg.conf
-    
+
     while true; do
         read -srp "Enter root password: " password
         echo
@@ -227,7 +227,7 @@ confirm() {
 
 install_base_system() {
     log "$1"
-    basestrap "${target_mount_point}" base base-devel linux linux-firmware btrfs-progs git nano elogind-${init_system} cryptsetup-${init_system} "${init_programs[@]}"
+    basestrap "${target_mount_point}" base base-devel linux-lts linux-firmware btrfs-progs nano git cryptsetup-${init_system} "${init_programs[@]}"
     fstabgen -U "${target_mount_point}" >> "${target_mount_point}/etc/fstab"
     [[ -n ${encrypt_root} ]] && echo -e "root\tUUID=${encrypted_uuid}\tnone\tluks" >> "${target_mount_point}/etc/crypttab" || true
 }
@@ -267,7 +267,7 @@ create_user() {
     useradd -m "${username}"
     echo "${username} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
     echo -e "${user_password}\n${user_password}" | passwd "${username}"
-    usermod -a -G video,audio,input,lp,power,storage,disk,network "${username}"
+    usermod -a -G video,audio,input,power,storage,disk,network "${username}"
 }
 
 add_universe_repo() {
